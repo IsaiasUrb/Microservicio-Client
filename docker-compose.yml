@@ -6,23 +6,26 @@ services:
     container_name: postgres
     environment:
       POSTGRES_DB: msclientes
-      POSTGRES_USER: Harolito
+      POSTGRES_USER: Isaias
       POSTGRES_PASSWORD: 1234
       TZ: America/Guayaquil
     volumes:
       - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
     networks:
       - red-ms
     restart: always
 
   ms-clientes:
+    build: .
     image: ms-clientes:local
     container_name: ms-clientes
     ports:
-      - "8081:8081"
+      - "8082:8081"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/msclientes
-      SPRING_DATASOURCE_USERNAME: Harolito
+      SPRING_DATASOURCE_USERNAME: Isaias
       SPRING_DATASOURCE_PASSWORD: 1234
     depends_on:
       - postgres
