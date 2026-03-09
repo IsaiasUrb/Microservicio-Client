@@ -1,4 +1,4 @@
-name: Build and Push Docker Image
+name: Build, Push and Deploy
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  build-and-push:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -36,3 +36,18 @@ jobs:
 
       - name: Subir imagen a Docker Hub
         run: docker push ${{ secrets.DOCKER_USERNAME }}/ms-clientes:latest
+
+      - name: Configurar llave SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.AZURE_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.AZURE_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Desplegar en Azure VM
+        run: |
+          ssh ${{ secrets.AZURE_USER }}@${{ secrets.AZURE_HOST }} << 'EOF'
+            cd ~/deploy/ms-clientes
+            docker-compose pull
+            docker-compose up -d
+          EOF

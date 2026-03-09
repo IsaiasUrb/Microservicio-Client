@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   postgres:
     image: postgres:16
@@ -18,8 +16,7 @@ services:
     restart: always
 
   ms-clientes:
-    build: .
-    image: ms-clientes:local
+    image: isaiasurb/ms-clientes:latest
     container_name: ms-clientes
     ports:
       - "8082:8081"
@@ -27,6 +24,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/msclientes
       SPRING_DATASOURCE_USERNAME: Isaias
       SPRING_DATASOURCE_PASSWORD: 1234
+      SERVER_PORT: 8081
     depends_on:
       - postgres
     networks:
@@ -35,7 +33,8 @@ services:
 
 volumes:
   db_data:
-    name: ms-clientes_db_data
+    name: isaias_ms_clientes_pgdata
 
 networks:
   red-ms:
+    driver: bridge
